@@ -12,3 +12,4 @@ the layout/display of Java Fx
 6. To add additional functionality, you can consider using the TableView
 from Lab I Part 3 and make a datalogger.
 7. See if you can make use of Matix keypad or Serial LCD in this Major Project.
+8. Use DataController class from Lab I instead of CountdownHandler class for fetching temperature data from the Arduino.
