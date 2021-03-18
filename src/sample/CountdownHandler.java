@@ -1,6 +1,9 @@
 package sample;
 // CountdownHandler class will fetch Temperature Data
 // from the Arduino and send it to JavaFx for display
+
+// You do not need Countdown Handler for this Project
+// You can use the DataController from Lab I instead of Countdown Handler
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;

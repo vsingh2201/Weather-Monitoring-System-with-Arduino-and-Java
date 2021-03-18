@@ -6,9 +6,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import net.aksingh.owmjapis.api.APIException;
 import sample.SerialPortService;
 import javafx.scene.control.Label;
 import javafx.geometry.Insets;
+import java.io.IOException;
+import java.util.Timer;
+import sample.OpenWeatherAPI;
 
 /*
 Current Goals in the Major Project
@@ -27,6 +31,9 @@ from Lab I Part 3 and make a datalogger.
 
 public class Main extends Application {
 
+    // How many times to run the Timer Scheduler
+    public static final byte TIMER_DURATION = 10;
+
     public static void main(String[] args) {
 
         launch(args);
@@ -34,8 +41,39 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        var sp = SerialPortService.getSerialPort("COM3");
+        /*var sp = SerialPortService.getSerialPort("COM3");
         var outputStream = sp.getOutputStream();
+
+
+
+        // at runtime ... we want to close down nicely.
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try{
+                //close the data stream
+                outputStream.close();
+            }catch (IOException e){
+                System.out.println("We had a problem shutting down the program.");
+                e.printStackTrace();
+            }
+            // closes the serial (USB) port connection to the Arduino
+            sp.closePort();
+        }));
+        try {
+            Thread.sleep(2000);
+        } catch (Exception ignored) {}
+
+        var timer = new Timer();
+        var countdown = new CountdownHandler(TIMER_DURATION, timer, outputStream);
+
+        // Added addDataListener to this class
+        sp.addDataListener(countdown);
+
+        // run the scheduler as many times as requested
+        //delay(1000);
+        timer.schedule(countdown,0,1000);
+
+        // things will run ... until they are done
+*/
 
         /*
         You need to add the code for sp.addDataListener and the
@@ -44,6 +82,20 @@ public class Main extends Application {
 
         var pane = new BorderPane();
         var label = new Label();
+
+        // Getting temperature data from the OpenWeather API class
+        try {
+            var temp = sample.OpenWeatherAPI.sendTemperature();
+            String displayTemp = String.valueOf(temp);
+            label.setText(displayTemp); // Displays the temperature on the Java Fx GUI
+
+        }
+        catch (APIException e){
+            e.printStackTrace();
+            System.out.println("Temperature not available");
+        }
+
+        //label.setText(name);
 
         pane.setCenter(label);
         pane.setPadding(new Insets(0, 20, 0, 20));
