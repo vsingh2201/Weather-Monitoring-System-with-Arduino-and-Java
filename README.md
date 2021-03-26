@@ -1,6 +1,8 @@
 # MajorProject
 EECS 1021 Major Projct
 
+Link to the Java Fx VM options on Intellij
+https://www.jetbrains.com/help/idea/javafx.html
 Current Tasks:
 Java Fx 11 does not work on Mac OS, switched to Java Fx 16 on both Windows and Mac OS.
 Test the layouts and the UI controls in the Oracle Java Fx docs.
