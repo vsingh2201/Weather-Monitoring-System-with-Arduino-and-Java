@@ -4,7 +4,14 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import net.aksingh.owmjapis.api.APIException;
 import sample.SerialPortService;
@@ -38,6 +45,47 @@ public class Main extends Application {
 
         launch(args);
     }
+
+    public HBox addHBox(){
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(15,12,15,12));
+        hbox.setSpacing(10);
+        hbox.setStyle("-fx-background-color: #336699;");
+
+        Button buttonCurrent = new Button("Outdoor Temperature");
+        buttonCurrent.setPrefSize(100,20);
+
+        Button buttonProjected = new Button("Indoor Temperature");
+        buttonProjected.setPrefSize(100,20);
+        hbox.getChildren().addAll(buttonCurrent,buttonProjected);
+
+        return hbox;
+    }
+
+    public VBox addVBox(){
+        VBox vbox = new VBox();
+        vbox.setPadding(new Insets(10));
+        vbox.setSpacing(8);
+
+        Text title = new Text("Data");
+        title.setFont(Font.font("Arial", FontWeight.BOLD,14));
+        vbox.getChildren().add(title);
+
+        Hyperlink options[] = new Hyperlink[] {
+                new Hyperlink("Sales"),
+                new Hyperlink("Marketing"),
+                new Hyperlink("Distribution"),
+                new Hyperlink("Costs")};
+
+        for (int i=0; i<4; i++) {
+            VBox.setMargin(options[i], new Insets(0, 0, 0, 8));
+            vbox.getChildren().add(options[i]);
+        }
+
+        return vbox;
+    }
+
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -80,8 +128,12 @@ public class Main extends Application {
         CountdownHandler part, timer for CountdownHandler
          */
 
+        // Here we are testing the Borderpane layout
         var pane = new BorderPane();
         var label = new Label();
+        HBox hbox = addHBox();
+        pane.setTop(hbox);
+        pane.setCenter(addVBox());
 
         // Getting temperature data from the OpenWeather API class
         try {
@@ -97,11 +149,11 @@ public class Main extends Application {
 
         //label.setText(name);
 
-        pane.setCenter(label);
-        pane.setPadding(new Insets(0, 20, 0, 20));
+        //pane.setCenter(label);
+        //pane.setPadding(new Insets(0, 20, 0, 20));
         //pane.setStyle("")
 
-        var scene = new Scene(pane, 400, 200);
+        var scene = new Scene(pane, 400, 400);
 
         primaryStage.setScene(scene);
         primaryStage.show();
