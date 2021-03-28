@@ -1,5 +1,6 @@
 package sample;
 
+import com.fazecast.jSerialComm.SerialPort;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -58,6 +59,9 @@ public class Main extends Application {
         Button buttonProjected = new Button("Indoor Temperature");
         buttonProjected.setPrefSize(100,20);
         hbox.getChildren().addAll(buttonCurrent,buttonProjected);
+        //Text temper = DataController.getTitle();
+        //hbox.getChildren().addAll(temper);
+
 
         return hbox;
     }
@@ -89,39 +93,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        /*var sp = SerialPortService.getSerialPort("COM3");
-        var outputStream = sp.getOutputStream();
 
+        var controller = new DataController(); // To get data from Arduino
+        var serialPort = SerialPortService.getSerialPort("COM3");
+        serialPort.addDataListener(controller);
 
+        //String dht11;
+        //dht11 = controller.getTemperature();
 
-        // at runtime ... we want to close down nicely.
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try{
-                //close the data stream
-                outputStream.close();
-            }catch (IOException e){
-                System.out.println("We had a problem shutting down the program.");
-                e.printStackTrace();
-            }
-            // closes the serial (USB) port connection to the Arduino
-            sp.closePort();
-        }));
-        try {
-            Thread.sleep(2000);
-        } catch (Exception ignored) {}
-
-        var timer = new Timer();
-        var countdown = new CountdownHandler(TIMER_DURATION, timer, outputStream);
-
-        // Added addDataListener to this class
-        sp.addDataListener(countdown);
-
-        // run the scheduler as many times as requested
-        //delay(1000);
-        timer.schedule(countdown,0,1000);
-
-        // things will run ... until they are done
-*/
 
         /*
         You need to add the code for sp.addDataListener and the
@@ -136,6 +115,7 @@ public class Main extends Application {
         pane.setCenter(addVBox());
 
         // Getting temperature data from the OpenWeather API class
+        /* Commented temporarily to avoid unnecessary API calls
         try {
             var temp = sample.OpenWeatherAPI.sendTemperature();
             String displayTemp = String.valueOf(temp);
@@ -146,6 +126,8 @@ public class Main extends Application {
             e.printStackTrace();
             System.out.println("Temperature not available");
         }
+        */
+
 
         //label.setText(name);
 
