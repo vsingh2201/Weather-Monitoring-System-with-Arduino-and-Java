@@ -20,4 +20,5 @@ the layout/display of Java Fx
 from Lab I Part 3 and make a datalogger.
 7. See if you can make use of Matix keypad or Serial LCD in this Major Project.
 8. Use DataController class from Lab I instead of CountdownHandler class for fetching temperature data from the Arduino.
+9. Do NOT use DataController class. Use CountdownHandler because it has a Timer and timer can be used to schedule data.
 
