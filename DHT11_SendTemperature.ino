@@ -12,7 +12,7 @@ U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);
  
 void setup(void) {
   Serial.begin(9600); 
-  Serial.println("DHTxx test!");
+  //Serial.println("DHTxx test!");
   
   dht.begin();
   u8x8.begin();
@@ -23,14 +23,23 @@ void setup(void) {
 void loop(void) {
  
   double temp, humi;
+  //int temp,humi;
   temp = dht.readTemperature();
   humi = dht.readHumidity();
-  // Converting double Temperature Data to String
+  /* This part was for InputStream in Java
+  Serial.write(temp);
+  delay(1000);
+  Serial.write(humi);
+  No Longer Required using*/
+  //Converting double Temperature Data to String
   String sendTemperature = String(temp,2);
   // Converting double Humidity Data to String
   String sendHumidity = String(humi,2);
   // Sending the DHT11 Sensor Data
-  Serial.println(sendTemperature);
+
+  // Combining the Temperature and Humidity String
+  sendTemperature.concat(sendHumidity);// Combined String
+  Serial.println(sendTemperature);// Sending Combined Data
   //Serial.println(sendHumidity);
  
   u8x8.setFont(u8x8_font_chroma48medium8_r);
