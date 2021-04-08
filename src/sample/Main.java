@@ -21,6 +21,7 @@ import javafx.geometry.Insets;
 import java.io.IOException;
 import java.util.Timer;
 import sample.OpenWeatherAPI;
+import sample.DHT11;
 
 /*
 Current Goals in the Major Project
@@ -35,6 +36,23 @@ the layout/display of Java Fx
 6. To add additional functionality, you can consider using the TableView
 from Lab I Part 3 and make a datalogger.
 7. See if you can make use of Matix keypad or Serial LCD in this Major Project.
+ */
+
+/*
+New Ideas
+1. You do not need to update the temperature sent by DHT11 dynamically.
+Just get the temperature value once and exit the serialEvent method
+Display the temperature value on the JavaFx window
+
+Then, here is the deal: You can create an update button at the bottom which
+will update all the values like OpenWeather API temp value and DHT11 temp value
+and the other values you are thinking about like Barometer sensor
+
+Once you figure out how to get all the values from Arduino and display them on
+JavaFx window, the only thing that is left is designing the GUI interface.
+
+Good job! Just keep thinking like this and Major Project will be done in no time
+
  */
 
 public class Main extends Application {
@@ -94,9 +112,9 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        var controller = new DataController(); // To get data from Arduino
-        var serialPort = SerialPortService.getSerialPort("COM3");
-        serialPort.addDataListener(controller);
+
+
+
 
         //String dht11;
         //dht11 = controller.getTemperature();
@@ -106,13 +124,58 @@ public class Main extends Application {
         You need to add the code for sp.addDataListener and the
         CountdownHandler part, timer for CountdownHandler
          */
+        //long delayTime = System.currentTimeMillis();
+        //long previousTime = 0;
 
+        var serialPort = SerialPortService.getSerialPort("COM3");
+        var outputStream = serialPort.getOutputStream();
+        var inputStream = serialPort.getInputStream();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            serialPort.closePort();
+        }));
+
+        try {
+            Thread.sleep(2000);
+        } catch (Exception ignored) {}
+
+
+        var timer = new Timer();
+        /*Testing DHT11 class
+        var dht11 = new DHT11(TIMER_DURATION,timer,inputStream);
+         Testing for only one loop
+        var dht11 = new DHT11((byte)4,timer,inputStream);
+
+        serialPort.addDataListener(dht11);
+        timer.schedule(dht11,0,1000);*/
+
+        // Testing the Countdown Handler class
+        //var countdown = new CountdownHandler(TIMER_DURATION,outputStream);
+        //serialPort.addDataListener(countdown);
+        //System.out.println("listen: " + countdown.getListeningEvents());
+        //timer.schedule(countdown,0,1000);
+
+
+        // Testing the ArduinoData class here
+        var arduinoData = new ArduinoData((byte)2,timer);
+        serialPort.addDataListener(arduinoData);
+        timer.schedule(arduinoData,0,1000);
         // Here we are testing the Borderpane layout
+
+
+        //var controller = new DataController(); // To get data from Arduino
+        //serialPort.addDataListener(controller);// Used with DataController class
+
         var pane = new BorderPane();
         var label = new Label();
-        HBox hbox = addHBox();
-        pane.setTop(hbox);
-        pane.setCenter(addVBox());
+        //HBox hbox = addHBox();
+        //pane.setTop(hbox);
+        //pane.setCenter(addVBox());
 
         // Getting temperature data from the OpenWeather API class
         /* Commented temporarily to avoid unnecessary API calls
@@ -126,19 +189,29 @@ public class Main extends Application {
             e.printStackTrace();
             System.out.println("Temperature not available");
         }
-        */
+
+         */
+
 
 
         //label.setText(name);
 
-        //pane.setCenter(label);
-        //pane.setPadding(new Insets(0, 20, 0, 20));
+
+
+        pane.setPadding(new Insets(0, 20, 0, 20));
         //pane.setStyle("")
+
+        // Printing Temperature data from DHT11 onto the Label
+       /* var dht11 = countdown.getLabelData();
+        System.out.println("Temperature: " + dht11);
+        label.setText(dht11);
+        //label.setText("Temperature");
+        pane.setCenter(label);*/
 
         var scene = new Scene(pane, 400, 400);
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
+       // primaryStage.setScene(scene);
+        //primaryStage.show();
 
 
     }

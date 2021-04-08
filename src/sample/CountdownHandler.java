@@ -2,8 +2,8 @@ package sample;
 // CountdownHandler class will fetch Temperature Data
 // from the Arduino and send it to JavaFx for display
 
-// You do not need Countdown Handler for this Project
-// You can use the DataController from Lab I instead of Countdown Handler
+// You do need Countdown Handler for this Project
+// You cannot use the DataController from Lab I instead of Countdown Handler
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
@@ -13,51 +13,45 @@ import java.io.OutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
+// I do not need outputStream in this class
+
 public class CountdownHandler extends TimerTask implements SerialPortDataListener {
 
     private byte n;
+    private final byte timerDuration;
     private final OutputStream outputStream;
-    private final Timer timer;
 
-
-    public CountdownHandler(byte timerDuration, Timer timer, OutputStream outputStream) {
+    // Constructor
+    public CountdownHandler(byte timerDuration, OutputStream outputStream) {
         this.n = timerDuration;
-        this.timer = timer;
+        this.timerDuration = timerDuration;
         this.outputStream = outputStream;
     }
-    @Override
-    public int getListeningEvents(){
-        return SerialPort.LISTENING_EVENT_DATA_RECEIVED;
-    }
-    // serialEvent function is called whenever getListeningEvents function receives data
-    @Override
-    public void serialEvent(SerialPortEvent serialPortEvent){
-        if(serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_RECEIVED){
-            // Reset the countdown back to initial stage
-            this.n = 10;
-            System.out.println("Button Pushed");
-        }
-    }
-
+    // Override the run() method from TimerTask
     @Override
     public void run(){
-        try{
-            if(this.n > 0){
-
-                this.outputStream.write(this.n);
-                this.n = (byte)(this.n - 1); // typecasting this.n -1 from int to byte
-            }
-            else{ // we are done and tell the Arduino we are done
-                this.outputStream.write(-1);
-                this.timer.cancel();
-            }
-        }
-        catch (IOException e)
-        {
-            System.out.println("Problem inside the countdownhandler run method");
-            e.printStackTrace();
-        }
-
+        System.out.println("listen: " + this.getListeningEvents());
 
     }
+    // Overide the getListeningEvents() from jSerialComm.SerialPortDataListener
+    @Override
+    public int getListeningEvents(){
+        System.out.println("rx!!");
+        return SerialPort.LISTENING_EVENT_DATA_RECEIVED;
+    }
+    // Override the serialEvent() from jSerialComm.SerialPortEvent
+    @Override
+    public void serialEvent(SerialPortEvent serialPortEvent){
+
+        if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_RECEIVED) {
+           // var data = serialPortEvent.getReceivedData(); // get Received data
+            //var convertedData = new String(data);
+
+
+            //System.out.println("DHT11: " + convertedData);
+            //this.n = timerDuration; // Reset the Countdown value
+        }
+    }
+
+
 }

@@ -5,7 +5,7 @@ import net.aksingh.owmjapis.model.CurrentWeather;
 
 public class OpenWeatherAPI {
 
-    private OpenWeatherAPI(){};
+    private OpenWeatherAPI(){}
 
     public static double sendTemperature() throws APIException{
         // declaring object of "OWM" class
