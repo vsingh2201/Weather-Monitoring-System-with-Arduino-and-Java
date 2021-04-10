@@ -34,11 +34,13 @@ public class ArduinoData extends TimerTask implements SerialPortMessageListenerW
                 var data = serialPortEvent.getReceivedData(); // get Received data
                 var convertedData = new String(data);// Converting Received bytes into String
                 StringBuilder receivedData = new StringBuilder(convertedData);// Creating a StringBuilder Object to separate Data values
-                System.out.println("Temperature: " + receivedData.substring(0,4));// Printing Temperature
-                System.out.println("Humidity: " + receivedData.substring(5,9));// Printing Humidity
-                //System.out.println("Original Data: " + convertedData);
-                //System.out.println("Humidity: " + humidity.substring(1) + humidity.substring(2));
-                //System.out.println("DHT11 Temperature: " + convertedData);
+                System.out.println("Indoor Data from the DHT11 and BMP280 Sensors");
+                System.out.println("Temperature: " + receivedData.substring(0,5) + "C");// Printing Temperature
+                System.out.println("Humidity: " + receivedData.substring(5,10) + "%");// Printing Humidity
+                System.out.println("Pressure: " + receivedData.substring(10,18) + "Pa");// Printing Pressure
+                System.out.println("Altitude: " + receivedData.substring(18,24)+ "m");// Printing Altitude
+                //System.out.println("Original Data: " + convertedData);// To print the whole combined thing
+
             }
 
         }
