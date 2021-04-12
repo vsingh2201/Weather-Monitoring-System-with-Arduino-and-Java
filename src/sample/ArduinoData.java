@@ -10,6 +10,10 @@ import java.io.OutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/* Next thing you need to try is
+Add a output stream in this class and send the data received from the
+OpenWeatherAPI to the Arduino and display it on the LCD
+* */
 public class ArduinoData extends TimerTask implements SerialPortMessageListenerWithExceptions{
 
     private byte n;
