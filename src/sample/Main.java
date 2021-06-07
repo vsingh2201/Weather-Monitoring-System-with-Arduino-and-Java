@@ -2,11 +2,7 @@ package sample;
 
 import com.fazecast.jSerialComm.SerialPort;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -16,7 +12,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import net.aksingh.owmjapis.api.APIException;
 import sample.SerialPortService;
-import javafx.scene.control.Label;
 import javafx.geometry.Insets;
 import java.io.IOException;
 import java.util.Timer;
@@ -27,35 +22,36 @@ import sample.DHT11;
 
 public class Main extends Application {
 
-    // How many times to run the Timer Scheduler
-    public static final byte TIMER_DURATION = 10;
 
     public static void main(String[] args) {
 
         launch(args);
     }
 
+    // HBox for the top part of the BorderPane Layout
     public HBox addHBox() {
         HBox hbox = new HBox();
         hbox.getStyleClass().add("hbox");
-        Text title = new Text("Indoor Vs Outdoor Data");
-        title.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
+        Text title = new Text("Outdoor Data From API");
+        title.setFont(Font.font("Arial", FontWeight.NORMAL, 40));
         hbox.getChildren().add(title);
         return hbox;
     }
-
+    // VBox to display all the options
     public VBox addVBox() {
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(10));
         vbox.setSpacing(8.0);
+        vbox.setStyle("-fx-background-color: #A4EBF3");
 
         Text options[] = new Text[]{
+                new Text("City"),
                 new Text("Temperature"),
                 new Text("Humidity"),
                 new Text("Pressure")
         };
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             VBox.setMargin(options[i], new Insets(15, 0, 0, 15));
             options[i].setFont(Font.font("Arial", FontWeight.NORMAL, 32));
             options[i].setLineSpacing(4.0);
@@ -71,17 +67,7 @@ public class Main extends Application {
 
 
             var serialPort = SerialPortService.getSerialPort("COM3");
-            var outputStream = serialPort.getOutputStream();
-            var inputStream = serialPort.getInputStream();
 
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                serialPort.closePort();
-            }));
 
             try {
                 Thread.sleep(2000);
@@ -89,40 +75,24 @@ public class Main extends Application {
             }
 
 
-            var timer = new Timer();
+            var timer = new Timer();// Creating a Timer Object
 
-
-
-
-
-            // Testing the ArduinoData class here
+            // Creating a arduinoData Object to receive data from Arduino
             var arduinoData = new ArduinoData((byte) 2, timer);
             serialPort.addDataListener(arduinoData);
             timer.schedule(arduinoData, 0, 1000);
-            // Here we are testing the Borderpane layout
 
+            // BorderPane Layout
             var pane = new BorderPane();
-            HBox hbox = addHBox();
-            var databox = new VBox();
+            HBox hbox = addHBox();// For top pane
+            var databox = new VBox(); // For Right Pane
             databox.setPadding(new Insets(10));
             databox.setSpacing(8);
-            //pane.setTop(hbox);
-            //pane.setCenter(addVBox());
-
-            // Getting temperature data from the OpenWeather API class
-        /* Commented temporarily to avoid unnecessary API calls
-        try {
-            var temp = sample.OpenWeatherAPI.sendTemperature();
-            String displayTemp = String.valueOf(temp);
-            label.setText(displayTemp); // Displays the temperature on the Java Fx GUI
-
-        }
-        catch (APIException e){
-            e.printStackTrace();
-            System.out.println("Temperature not available");
-        }
-
-         */
+            Text cityName = new Text("Toronto");
+            databox.getChildren().add(cityName);
+            VBox.setMargin(cityName,new Insets(15,0,0,15));
+            cityName.setFont(Font.font("Arial",FontWeight.NORMAL,32));
+            cityName.setLineSpacing(4.0);
 
             // Getting data from the OpenWeather API and displaying on JavaFx Window
             OpenWeatherAPI weatherData = new OpenWeatherAPI();
@@ -130,8 +100,8 @@ public class Main extends Application {
             try{
 
                 var temperature = weatherData.getTemperature();
-                System.out.println("Temperature: " + temperature);
-                Text tempValue = new Text(String.valueOf(temperature));
+                //System.out.println("Temperature: " + temperature);
+                Text tempValue = new Text(String.valueOf(temperature) + "C");
                 VBox.setMargin(tempValue,new Insets(15,0,0,15));
                 tempValue.setFont(Font.font("Arial",FontWeight.NORMAL,32));
                 tempValue.setLineSpacing(4.0);
@@ -148,8 +118,8 @@ public class Main extends Application {
 
             try{
                 var humidity = weatherData.getHumidity();
-                System.out.println("Humidity: " + humidity);
-                Text humidityValue = new Text(String.valueOf(humidity));
+                //System.out.println("Humidity: " + humidity);
+                Text humidityValue = new Text(String.valueOf(humidity) + "%");
                 VBox.setMargin(humidityValue,new Insets(15,0,0,15));
                 humidityValue.setFont(Font.font("Arial",FontWeight.NORMAL,32));
                 humidityValue.setLineSpacing(4.0);
@@ -159,12 +129,12 @@ public class Main extends Application {
                 e.printStackTrace();
                 System.out.println("Humidity data not available");
             }
-            // Pressure Data
+            // Pressure Data for Toronto
 
             try{
                 var pressure = weatherData.getPressure();
-                System.out.println("Pressure: " + pressure);
-                Text pressureValue = new Text(String.valueOf(pressure));
+                //System.out.println("Pressure: " + pressure);
+                Text pressureValue = new Text(String.valueOf(pressure + "Pa"));
                 VBox.setMargin(pressureValue,new Insets(15,0,0,15));
                 pressureValue.setFont(Font.font("Arial",FontWeight.NORMAL,32));
                 pressureValue.setLineSpacing(4.0);
@@ -174,22 +144,20 @@ public class Main extends Application {
                 e.printStackTrace();
                 System.out.println("Pressure data not available");
             }
-
+            // Setting up the BorderPane Layout
             pane.setTop(hbox);
             pane.setLeft(addVBox());
             pane.setRight(databox);
 
-
             pane.setPadding(new Insets(0, 20, 0, 20));
-            //pane.setStyle("")
 
 
-            var scene = new Scene(pane, 400, 400);
+            var scene = new Scene(pane, 500, 500);
             // Adding CSS stylesheet
             scene.getStylesheets().add(Main.class.getResource("Styles.css").toExternalForm());
 
             primaryStage.setScene(scene);
-            primaryStage.setTitle("EECS1021 Major Project");
+            primaryStage.setTitle("EECS1021 Major Project: Indoor Vs Outdoor Weather Data");
             primaryStage.show();
 
 
