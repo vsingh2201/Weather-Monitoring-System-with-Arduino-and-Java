@@ -1,11 +1,8 @@
 package sample;
 
+import com.fazecast.jSerialComm.SerialPort;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -15,149 +12,155 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import net.aksingh.owmjapis.api.APIException;
 import sample.SerialPortService;
-import javafx.scene.control.Label;
 import javafx.geometry.Insets;
 import java.io.IOException;
 import java.util.Timer;
 import sample.OpenWeatherAPI;
+import sample.DHT11;
 
-/*
-Current Goals in the Major Project
-1. To get temperature data through DHT11 and Arduino from the Countdown Handler
-and display it on the JavaFx label.
-2. To get temperature data from the OpenWeather API and
-display it on the Java Fx label.
-3. If parts 1 and 2 are successfully completed do some research on
-the layout/display of Java Fx
-4. Find out how you can add CSS stylesheet.
-5. Figure out if you can use the barometer sensor on Grove board in similiar way
-6. To add additional functionality, you can consider using the TableView
-from Lab I Part 3 and make a datalogger.
-7. See if you can make use of Matix keypad or Serial LCD in this Major Project.
- */
+
 
 public class Main extends Application {
 
-    // How many times to run the Timer Scheduler
-    public static final byte TIMER_DURATION = 10;
 
     public static void main(String[] args) {
 
         launch(args);
     }
 
-    public HBox addHBox(){
+    // HBox for the top part of the BorderPane Layout
+    public HBox addHBox() {
         HBox hbox = new HBox();
-        hbox.setPadding(new Insets(15,12,15,12));
-        hbox.setSpacing(10);
-        hbox.setStyle("-fx-background-color: #336699;");
-
-        Button buttonCurrent = new Button("Outdoor Temperature");
-        buttonCurrent.setPrefSize(100,20);
-
-        Button buttonProjected = new Button("Indoor Temperature");
-        buttonProjected.setPrefSize(100,20);
-        hbox.getChildren().addAll(buttonCurrent,buttonProjected);
-
+        hbox.getStyleClass().add("hbox");
+        Text title = new Text("Outdoor Data From API");
+        title.setFont(Font.font("Arial", FontWeight.NORMAL, 40));
+        hbox.getChildren().add(title);
         return hbox;
     }
-
-    public VBox addVBox(){
+    // VBox to display all the options
+    public VBox addVBox() {
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(10));
-        vbox.setSpacing(8);
+        vbox.setSpacing(8.0);
+        vbox.setStyle("-fx-background-color: #A4EBF3");
 
-        Text title = new Text("Data");
-        title.setFont(Font.font("Arial", FontWeight.BOLD,14));
-        vbox.getChildren().add(title);
+        Text options[] = new Text[]{
+                new Text("City"),
+                new Text("Temperature"),
+                new Text("Humidity"),
+                new Text("Pressure")
+        };
 
-        Hyperlink options[] = new Hyperlink[] {
-                new Hyperlink("Sales"),
-                new Hyperlink("Marketing"),
-                new Hyperlink("Distribution"),
-                new Hyperlink("Costs")};
-
-        for (int i=0; i<4; i++) {
-            VBox.setMargin(options[i], new Insets(0, 0, 0, 8));
+        for (int i = 0; i < 4; i++) {
+            VBox.setMargin(options[i], new Insets(15, 0, 0, 15));
+            options[i].setFont(Font.font("Arial", FontWeight.NORMAL, 32));
+            options[i].setLineSpacing(4.0);
             vbox.getChildren().add(options[i]);
         }
 
-        return vbox;
-    }
+            return vbox;
+        }
 
 
-
-    @Override
-    public void start(Stage primaryStage) {
-        /*var sp = SerialPortService.getSerialPort("COM3");
-        var outputStream = sp.getOutputStream();
+        @Override
+        public void start (Stage primaryStage){
 
 
+            var serialPort = SerialPortService.getSerialPort("COM3");
 
-        // at runtime ... we want to close down nicely.
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try{
-                //close the data stream
-                outputStream.close();
-            }catch (IOException e){
-                System.out.println("We had a problem shutting down the program.");
-                e.printStackTrace();
+
+            try {
+                Thread.sleep(2000);
+            } catch (Exception ignored) {
             }
-            // closes the serial (USB) port connection to the Arduino
-            sp.closePort();
-        }));
-        try {
-            Thread.sleep(2000);
-        } catch (Exception ignored) {}
 
-        var timer = new Timer();
-        var countdown = new CountdownHandler(TIMER_DURATION, timer, outputStream);
 
-        // Added addDataListener to this class
-        sp.addDataListener(countdown);
+            var timer = new Timer();// Creating a Timer Object
 
-        // run the scheduler as many times as requested
-        //delay(1000);
-        timer.schedule(countdown,0,1000);
+            // Creating a arduinoData Object to receive data from Arduino
+            var arduinoData = new ArduinoData((byte) 2, timer);
+            serialPort.addDataListener(arduinoData);
+            timer.schedule(arduinoData, 0, 1000);
 
-        // things will run ... until they are done
-*/
+            // BorderPane Layout
+            var pane = new BorderPane();
+            HBox hbox = addHBox();// For top pane
+            var databox = new VBox(); // For Right Pane
+            databox.setPadding(new Insets(10));
+            databox.setSpacing(8);
+            Text cityName = new Text("Toronto");
+            databox.getChildren().add(cityName);
+            VBox.setMargin(cityName,new Insets(15,0,0,15));
+            cityName.setFont(Font.font("Arial",FontWeight.NORMAL,32));
+            cityName.setLineSpacing(4.0);
 
-        /*
-        You need to add the code for sp.addDataListener and the
-        CountdownHandler part, timer for CountdownHandler
-         */
+            // Getting data from the OpenWeather API and displaying on JavaFx Window
+            OpenWeatherAPI weatherData = new OpenWeatherAPI();
+            // Temperature Data for Toronto
+            try{
 
-        // Here we are testing the Borderpane layout
-        var pane = new BorderPane();
-        var label = new Label();
-        HBox hbox = addHBox();
-        pane.setTop(hbox);
-        pane.setCenter(addVBox());
+                var temperature = weatherData.getTemperature();
+                //System.out.println("Temperature: " + temperature);
+                Text tempValue = new Text(String.valueOf(temperature) + "C");
+                VBox.setMargin(tempValue,new Insets(15,0,0,15));
+                tempValue.setFont(Font.font("Arial",FontWeight.NORMAL,32));
+                tempValue.setLineSpacing(4.0);
+                databox.getChildren().add(tempValue);
 
-        // Getting temperature data from the OpenWeather API class
-        try {
-            var temp = sample.OpenWeatherAPI.sendTemperature();
-            String displayTemp = String.valueOf(temp);
-            label.setText(displayTemp); // Displays the temperature on the Java Fx GUI
+            }
+            catch (APIException e){
+                e.printStackTrace();
+                System.out.println("Weather Data not available");
+
+
+            }
+            // Humidity data for Toronto
+
+            try{
+                var humidity = weatherData.getHumidity();
+                //System.out.println("Humidity: " + humidity);
+                Text humidityValue = new Text(String.valueOf(humidity) + "%");
+                VBox.setMargin(humidityValue,new Insets(15,0,0,15));
+                humidityValue.setFont(Font.font("Arial",FontWeight.NORMAL,32));
+                humidityValue.setLineSpacing(4.0);
+                databox.getChildren().add(humidityValue);
+            }
+            catch (APIException e){
+                e.printStackTrace();
+                System.out.println("Humidity data not available");
+            }
+            // Pressure Data for Toronto
+
+            try{
+                var pressure = weatherData.getPressure();
+                //System.out.println("Pressure: " + pressure);
+                Text pressureValue = new Text(String.valueOf(pressure + "Pa"));
+                VBox.setMargin(pressureValue,new Insets(15,0,0,15));
+                pressureValue.setFont(Font.font("Arial",FontWeight.NORMAL,32));
+                pressureValue.setLineSpacing(4.0);
+                databox.getChildren().add(pressureValue);
+            }
+            catch (APIException e){
+                e.printStackTrace();
+                System.out.println("Pressure data not available");
+            }
+            // Setting up the BorderPane Layout
+            pane.setTop(hbox);
+            pane.setLeft(addVBox());
+            pane.setRight(databox);
+
+            pane.setPadding(new Insets(0, 20, 0, 20));
+
+
+            var scene = new Scene(pane, 500, 500);
+            // Adding CSS stylesheet
+            scene.getStylesheets().add(Main.class.getResource("Styles.css").toExternalForm());
+
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("EECS1021 Major Project: Indoor Vs Outdoor Weather Data");
+            primaryStage.show();
+
 
         }
-        catch (APIException e){
-            e.printStackTrace();
-            System.out.println("Temperature not available");
-        }
-
-        //label.setText(name);
-
-        //pane.setCenter(label);
-        //pane.setPadding(new Insets(0, 20, 0, 20));
-        //pane.setStyle("")
-
-        var scene = new Scene(pane, 400, 400);
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-
     }
-}
+
