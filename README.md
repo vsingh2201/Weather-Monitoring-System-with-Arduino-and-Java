@@ -1,24 +1,13 @@
-# MajorProject
-EECS 1021 Major Projct
+# Indoor vs Outdoor Weather Monitoring System with Arduino and Java
+<br>
+<p>I made an Indoor vs Outdoor Weather Monitoring System using the Grove Board and a Java program.
+The indoor weather data was obtained using the 2 sensors on Grove board: DHT11 and BMP280. DHT11
+was used to obtain Temperature and Humidity data whereas the BMP280 was used to obtain
+Atmospheric Pressure and Altitude. To get the Outdoor weather data, I used the Open Weather API in
+my Java program.</p>
+<br>
+![image](https://user-images.githubusercontent.com/70337807/122850989-30e6c400-d2dc-11eb-8caf-94792799fcde.png)
 
-Link to the Java Fx VM options on Intellij<br>
 
-https://www.jetbrains.com/help/idea/javafx.html <br>
-Current Tasks:
-Java Fx 11 does not work on Mac OS, switched to Java Fx 16 on both Windows and Mac OS.
-Test the layouts and the UI controls in the Oracle Java Fx docs.
-Current Goals in the Major Project
-1. To get temperature data through DHT11 and Arduino from the Countdown Handler
-and display it on the JavaFx label.
-2. To get temperature data from the OpenWeather API and
-display it on the Java Fx label.
-3. If parts 1 and 2 are successfully completed do some research on
-the layout/display of Java Fx
-4. Find out how you can add CSS stylesheet.
-5. Figure out if you can use the barometer sensor on Grove board in similiar way
-6. To add additional functionality, you can consider using the TableView
-from Lab I Part 3 and make a datalogger.
-7. See if you can make use of Matix keypad or Serial LCD in this Major Project.
-8. Use DataController class from Lab I instead of CountdownHandler class for fetching temperature data from the Arduino.
-9. Do NOT use DataController class. Use CountdownHandler because it has a Timer and timer can be used to schedule data.
+
 
