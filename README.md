@@ -6,7 +6,6 @@ was used to obtain Temperature and Humidity data whereas the BMP280 was used to 
 Atmospheric Pressure and Altitude. To get the Outdoor weather data, I used the Open Weather API in
 my Java program.</p>
 <br>
-![image](https://user-images.githubusercontent.com/70337807/122850989-30e6c400-d2dc-11eb-8caf-94792799fcde.png)
 
 ## Screenshots
 
