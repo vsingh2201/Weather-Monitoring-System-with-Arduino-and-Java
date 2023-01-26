@@ -8,6 +8,10 @@ my Java program.</p>
 <br>
 ![image](https://user-images.githubusercontent.com/70337807/122850989-30e6c400-d2dc-11eb-8caf-94792799fcde.png)
 
+## Screenshots
+
+![App Screenshot](https://user-images.githubusercontent.com/70337807/122850989-30e6c400-d2dc-11eb-8caf-94792799fcde.png)
+
 
 
 
