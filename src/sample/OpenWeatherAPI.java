@@ -14,7 +14,7 @@ public class OpenWeatherAPI {
 
     public double getTemperature() throws APIException{
         // declaring object of "OWM" class
-        OWM owm = new OWM("710d0b11cdff5de6ce42a0e2c369b70f");
+        OWM owm = new OWM("ADD YOUR API KEY HERE");
         CurrentWeather cwd = owm.currentWeatherByCityName("Toronto");
 
         var currentTemp = cwd.getMainData().getTemp();
